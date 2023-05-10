@@ -15,7 +15,7 @@ export default function Hydrate({ children }: { children: ReactNode }) {
     <SessionProvider>
       {isHydrated ? (
         <body
-          className="px-4 lg:px-48 font-roboto"
+          className="px-12 pb-6 lg:px-48 font-roboto"
           data-theme={themeStore.mode}
         >
           {children}

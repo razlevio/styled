@@ -15,15 +15,15 @@ export default function Nav() {
   const { data: session, status } = useSession()
 
   return (
-    <nav className="flex justify-between items-center py-12">
+    <nav className="flex items-center justify-between pt-4 pb-12">
       <Link href={"/"}>
-        <h1 className="font-lobster text-xl">Styled</h1>
+        <h1 className="text-xl rounded font-lobster btn-ghost">Styled</h1>
       </Link>
-      <ul className="flex items-center gap-8">
+      <ul className="flex items-center justify-center gap-8">
         {/* Toggle the cart */}
         <li
           onClick={() => cartStore.toggleCart()}
-          className="flex items-center text-3xl relative cursor-pointer"
+          className="relative flex items-center text-3xl cursor-pointer"
         >
           <AiFillShopping />
           <AnimatePresence>
@@ -32,7 +32,7 @@ export default function Nav() {
                 animate={{ scale: 1 }}
                 initial={{ scale: 0 }}
                 exit={{ scale: 0 }}
-                className="bg-primary text-white text-sm font-bold w-5 h-5 rounded-full absolute left-4 bottom-4 flex items-center justify-center"
+                className="absolute flex items-center justify-center w-5 h-5 text-sm font-bold text-white rounded-full bg-primary left-4 bottom-4"
               >
                 {cartStore.cart.length}
               </motion.span>
@@ -43,13 +43,13 @@ export default function Nav() {
         <DarkLight />
         {/* If the user is not signed in */}
         {!session?.user && (
-          <li className="bg-primary text-white py-2 px-4 rounded-md">
+          <li className="px-4 py-2 text-white rounded-md bg-primary">
             <button onClick={() => signIn()}>Sign in</button>
           </li>
         )}
         {session?.user && (
           <li>
-            <div className="dropdown dropdown-end cursor-pointer">
+            <div className="cursor-pointer dropdown dropdown-end">
               <Image
                 src={session.user?.image as string}
                 alt={session.user.name as string}
@@ -60,10 +60,10 @@ export default function Nav() {
               />
               <ul
                 tabIndex={0}
-                className="dropdown-content menu p-4 space-y-4 shadow bg-base-100 rounded-box w-72"
+                className="p-4 space-y-4 shadow dropdown-content menu bg-base-100 rounded-box w-72"
               >
                 <Link
-                  className="hover:bg-base-300 p-4 rounded-md"
+                  className="p-4 rounded-md hover:bg-base-300"
                   href={"/dashboard"}
                   onClick={() => {
                     if (document.activeElement instanceof HTMLElement) {
@@ -80,7 +80,7 @@ export default function Nav() {
                       document.activeElement.blur()
                     }
                   }}
-                  className="hover:bg-base-300 p-4 rounded-md"
+                  className="p-4 rounded-md hover:bg-base-300"
                 >
                   Sign out
                 </li>

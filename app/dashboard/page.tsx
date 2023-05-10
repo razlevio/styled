@@ -1,42 +1,66 @@
 "use client"
 
-import formatPrice from "@/util/PriceFormat"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import formatPrice from "@/util/PriceFormat";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+interface Order {
+  id: string;
+  status: string;
+  createdDate: string;
+  products: {
+    id: string;
+    name: string;
+    image: string;
+    unit_amount: number;
+    quantity: number;
+  }[];
+  amount: number;
+}
 
 export default function Dashboard() {
-  const [orders, setOrders] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
   const fetchOrders = async () => {
-    const res = await fetch("/api/get-orders")
-    const data = await res.json()
-    return data
-  }
+    try {
+      const res = await fetch("/api/get-orders");
+      const data = await res.json();
+      setOrders(data);
+      setLoading(false);
+    } catch (err: unknown) {
+      setError(err as Error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchOrders()
-      .then((data) => {
-        setOrders(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        setError(err)
-        setLoading(false)
-      })
-  }, [])
-  console.log(orders)
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {error}</p>
+    fetchOrders();
+  }, []);
+
+  console.log(orders);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
+
   return (
     <motion.div layout>
       <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        {orders.map((order) => (
+        {orders.map((order: Order) => (
           <div
             key={order.id}
-            className="rounded-lg p-8 my-4 space-y-2 bg-base-200"
+            className="p-8 my-4 space-y-2 rounded-lg bg-base-200"
           >
-            <h2 className="text-xs font-medium">Order reference: {order.id}</h2>
+            <h2 className="text-xs font-medium">
+              Order reference: {order.id}
+            </h2>
             <p className="text-xs">
               Status:
               <span
@@ -51,7 +75,7 @@ export default function Dashboard() {
             <p className="text-xs">
               Time: {new Date(order.createdDate).toString()}
             </p>
-            <div className="text-sm lg:flex items-center  gap-4">
+            <div className="items-center gap-4 text-sm lg:flex">
               {order.products.map((product) => (
                 <div className="py-2" key={product.id}>
                   <h2 className="py-2">{product.name}</h2>
@@ -70,12 +94,12 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-            <p className="font-medium py-2">
+            <p className="py-2 font-medium">
               Total: {formatPrice(order.amount)}
             </p>
           </div>
         ))}
       </motion.div>
     </motion.div>
-  )
+  );
 }
